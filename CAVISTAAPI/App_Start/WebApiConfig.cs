@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace CAVISTAAPI
 {
@@ -19,6 +20,11 @@ namespace CAVISTAAPI
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+            var cors = new EnableCorsAttribute(origins: "*", headers: "*", methods: "*") //   Allow only frontend URL
+            {
+                SupportsCredentials = true //  Allows cookies to be sent
+            };
+            config.EnableCors(cors);
         }
     }
 }
