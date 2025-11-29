@@ -99,3 +99,4 @@ D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\System.Numerics.Vectors.xml
 D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\System.Runtime.CompilerServices.Unsafe.xml
 D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\System.Threading.Tasks.Extensions.xml
 D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Http.Cors.xml
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\Ionic.Zip.dll
