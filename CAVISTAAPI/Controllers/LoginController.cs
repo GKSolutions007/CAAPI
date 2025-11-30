@@ -284,6 +284,154 @@ namespace CAVISTAAPI.Controllers
             return Ok(list);
         }
         [HttpGet]
+        [Route("api/signup/manageforgotpassword")]
+        public IHttpActionResult ManageForgotPassword(int Flag, string Val1, string Val2, string Val3, string Val4)
+        {
+            try
+            {
+                var objNames = new List<object>();
+                DataTable dt = new DataTable();
+                if (Flag == 1)
+                {
+                    dt = bl.BL_ExecuteParamSP("uspManageForgotPassword", Flag, Val1);
+                    if (dt.Rows.Count > 0)
+                    {
+                        string RecEmail = dt.Rows[0]["EMailID"].ToString();
+                        string UID = dt.Rows[0]["ID"].ToString();
+                        string UserName = dt.Rows[0]["UserName"].ToString();
+                        objNames.Add(new
+                        {
+                            ID = "2",
+                            Msg = "User verified",
+                            Email = RecEmail,
+                            UID = UID,
+                            UserName = UserName
+                        });
+                    }
+                    else
+                    {
+                        objNames.Add(new
+                        {
+                            ID = "1",
+                            Msg = "User is not exists, Invalid User ID or E-Mail ID",
+                        });
+                    }
+                }
+                if (Flag == 2)
+                {
+                    Random rd = new Random();
+                    int otp = rd.Next(100000, 999999);
+                    bool IsSend = bl.SendEmail("Pasword Recovery", "You recovery OTP : <h2 style='color:brown;'>" + otp.ToString() + "</h2>", Val2);
+                    if (IsSend)
+                    {
+                        int OTPID = 0;
+                        DataTable dtOTP = bl.BL_ExecuteParamSP("uspManageOTP", 1, 0, "forgotpassword", otp);
+                        if (dtOTP.Rows.Count > 0)
+                        {
+                            OTPID = Convert.ToInt32(dtOTP.Rows[0][0].ToString());
+                        }
+                        objNames.Add(new
+                        {
+                            ID = "2",
+                            Msg = "OTP is send to Recovery E-Mail ID.",
+                            Val1 = OTPID.ToString()
+                        });
+                    }
+                    else
+                    {
+                        objNames.Add(new
+                        {
+                            ID = "3",
+                            Msg = "Recovery E-Mail is not sending. Please try again",
+                        });
+                    }
+                }
+                else if (Flag == 3)
+                {
+                    dt = bl.BL_ExecuteParamSP("uspManageForgotPassword", 2, Val1, clsEncryptDecrypt.Encrypt(Val3));
+                    if (dt.Rows.Count > 0)
+                    {
+                        objNames.Add(new
+                        {
+                            ID = "1",
+                            Msg = "Password Reset Successfully.",
+                        });
+                    }
+                    else
+                    {
+                        objNames.Add(new
+                        {
+                            ID = "2",
+                            Msg = "Password Reset failed. Give the correct values",
+                        });
+                    }
+                }
+                return Ok(objNames);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        [HttpGet]
+        [Route("api/signup/manageotp")]
+        public IHttpActionResult ManageOTP(int Mode, string FormName, int ID, string ToMail, string OTP)
+        {
+            var objNames = new List<object>();
+            if (Mode == 1)// Sending OTP to ToMail ID and OTP store in table
+            {
+                Random rd = new Random();
+                int otp = rd.Next(100000, 999999);
+                bool IsSend = bl.SendEmail("VISTA Authentication OTP", "Your Authentication OTP : <h2 style='color:brown;'>" + otp.ToString() + "</h2>", ToMail);
+                if (IsSend)
+                {
+                    int OTPID = 0;
+                    DataTable dtOTP = bl.BL_ExecuteParamSP("uspManageOTP", 1, 0, FormName, otp);
+                    if (dtOTP.Rows.Count > 0)
+                    {
+                        OTPID = Convert.ToInt32(dtOTP.Rows[0][0].ToString());
+                    }
+                    objNames.Add(new
+                    {
+                        ID = "2",
+                        Msg = "OTP is send to given E-Mail ID.",
+                        Val1 = OTPID.ToString()
+                    });
+                }
+                else
+                {
+                    objNames.Add(new
+                    {
+                        ID = "3",
+                        Msg = "OTP E-Mail is not sending. Please check E-mail ID and try again",
+                    });
+                }
+            }
+            else if (Mode == 2)
+            {
+                DataTable dtOTP = bl.BL_ExecuteParamSP("uspManageOTP", 2, ID, FormName, OTP);
+                if (dtOTP.Rows.Count > 0)
+                {
+                    objNames.Add(new
+                    {
+                        ID = "0",
+                        Msg = "OTP Authentication Success.",
+                        Val1 = ""
+                    });
+                }
+                else
+                {
+                    objNames.Add(new
+                    {
+                        ID = "1",
+                        Msg = "Invalid OTP",
+                        Val1 = ""
+                    });
+                }
+            }
+            return Ok(objNames);
+        }
+        [HttpGet]
         [Route("api/signup/checkapi")]
         public IHttpActionResult checkapirun(string msg)
         {
