@@ -209,6 +209,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImportexportController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\ToolsController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="DALHelper\clsDAL.cs" />
@@ -218,6 +219,7 @@
     </Compile>
     <Compile Include="Models\CustomerMasterModel.cs" />
     <Compile Include="Controllers\MasterController.cs" />
+    <Compile Include="Models\ReportModel.cs" />
     <Compile Include="Models\ToolsModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

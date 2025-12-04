@@ -1,6 +1,8 @@
 ﻿using CAVISTAAPI.BuisnessLayer;
+using CAVISTAAPI.DALHelper;
 using CAVISTAAPI.Models;
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Drawing;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System;
@@ -21,6 +23,8 @@ namespace CAVISTAAPI.Controllers
     {
         clsBusinessLayer objBL = new clsBusinessLayer();
         public string strSheetName { get; set; }
+        public int CustomerID { get; set; }
+        public int CustomerGroupCodeID { get; set; }
         public int ConstitutionID { get; set; }
         public int StateID { get; set; }
         public string strExtension = ".xlsx";
@@ -35,7 +39,7 @@ namespace CAVISTAAPI.Controllers
         [System.Web.Http.Route("api/uploadimportfile")]
         public IHttpActionResult LoadSelectFiledata()
         {
-            string Msg = "";
+            string Msg = "",TName = "";
             string dt = "";
             List<ImportResults> MTM = new List<ImportResults>();
             try
@@ -46,6 +50,7 @@ namespace CAVISTAAPI.Controllers
                 {
                     string TransID = HttpContext.Current.Request.Files.AllKeys[0].ToString();
                     string TransName = HttpContext.Current.Request.Files.AllKeys[1].ToString();
+                    TName= HttpContext.Current.Request.Files.AllKeys[1].ToString();
                     string fileName = HttpContext.Current.Request.Files[2].FileName;
                     string fileContentType = HttpContext.Current.Request.Files[2].ContentType;
                     string UserID = HttpContext.Current.Request.Files.AllKeys[2].ToString();
@@ -86,15 +91,14 @@ namespace CAVISTAAPI.Controllers
                             dtCorrectValues.Columns.Add(str);
                             dtWrongValues.Columns.Add(str);
                         }
-                        dtCorrectValues.Columns.Add("TaxPern");
-                        dtCorrectValues.Columns.Add("UOM");
+                        dtCorrectValues.Columns.Add("ID");                        
                         if (!ErrorColAlreadyExisist)
                         {
                             dtCorrectValues.Columns.Add("Error");
                             dtWrongValues.Columns.Add("Error");
                         }
                         #region Customer
-                        else if (TransID == "1")
+                        if (TransID == "1")
                         {
                             if (dtData.Rows.Count > 0)
                             {
@@ -113,6 +117,75 @@ namespace CAVISTAAPI.Controllers
                                         dtWrongValues.Rows[rid - 1]["Error"] = RowError;
                                         //fill valid data only
                                         dtCorrectValues.Rows.Add(item.ItemArray);
+                                        int lastrowid = dtCorrectValues.Rows.Count;
+                                        dtCorrectValues.Rows[lastrowid - 1]["ID"] = CustomerID;
+                                        dtCorrectValues.Rows[lastrowid - 1]["Customer Group Code *"] = CustomerGroupCodeID;
+                                        dtCorrectValues.Rows[lastrowid - 1]["Constitution *"] = ConstitutionID;
+                                        dtCorrectValues.Rows[lastrowid - 1]["State Name"] = StateID;                                        
+                                        string itpassword = dtCorrectValues.Rows[lastrowid - 1]["IT Password"].ToString();
+                                        if (!string.IsNullOrEmpty(itpassword))
+                                        {
+                                            dtCorrectValues.Rows[lastrowid - 1]["IT Password"] = clsEncryptDecrypt.Encrypt(itpassword);
+                                        }
+                                        else
+                                        {
+                                            dtCorrectValues.Rows[lastrowid - 1]["IT Password"] = null;
+                                        }
+                                        string gstpassword = dtCorrectValues.Rows[lastrowid - 1]["GST Password"].ToString();
+                                        if (!string.IsNullOrEmpty(gstpassword))
+                                        {
+                                            dtCorrectValues.Rows[lastrowid - 1]["GST Password"] = clsEncryptDecrypt.Encrypt(gstpassword);
+                                        }
+                                        else
+                                        {
+                                            dtCorrectValues.Rows[lastrowid - 1]["GST Password"] = null;
+                                        }
+                                        if(!string.IsNullOrEmpty(dtCorrectValues.Rows[lastrowid - 1]["Date of Registration/Incorporation"].ToString()))
+                                        {
+                                            DateTime date = DateTime.ParseExact(dtCorrectValues.Rows[lastrowid - 1]["Date of Registration/Incorporation"].ToString(), "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                                            string formattedDate = date.ToString("yyyy-MM-dd");
+                                            dt = Convert.ToDateTime(formattedDate).ToString();//"yyyy-MM-dd"
+                                            dtCorrectValues.Rows[lastrowid - 1]["Date of Registration/Incorporation"] = formattedDate;
+                                        }
+                                        else
+                                        {
+                                            dtCorrectValues.Rows[lastrowid - 1]["Date of Registration/Incorporation"] = null;
+                                        }
+                                        if (!string.IsNullOrEmpty(dtCorrectValues.Rows[lastrowid - 1]["Date of Birth"].ToString()))
+                                        {
+                                            DateTime date = DateTime.ParseExact(dtCorrectValues.Rows[lastrowid - 1]["Date of Birth"].ToString(), "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                                            string formattedDate = date.ToString("yyyy-MM-dd");
+                                            dt = Convert.ToDateTime(formattedDate).ToString();//"yyyy-MM-dd"
+                                            dtCorrectValues.Rows[lastrowid - 1]["Date of Birth"] = formattedDate;
+                                        }
+                                        else
+                                        {
+                                            dtCorrectValues.Rows[lastrowid - 1]["Date of Birth"] = null;
+                                        }
+
+                                        ////
+                                        if(!string.IsNullOrEmpty(dtCorrectValues.Rows[lastrowid - 1]["GST Registration Date"].ToString()))
+                                        {
+                                            DateTime date = DateTime.ParseExact(dtCorrectValues.Rows[lastrowid - 1]["GST Registration Date"].ToString(), "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                                            string formattedDate = date.ToString("yyyy-MM-dd");
+                                            dt = Convert.ToDateTime(formattedDate).ToString();//"yyyy-MM-dd"
+                                            dtCorrectValues.Rows[lastrowid - 1]["GST Registration Date"] = formattedDate;
+                                        }
+                                        else
+                                        {
+                                            dtCorrectValues.Rows[lastrowid - 1]["GST Registration Date"] = null;
+                                        }
+                                        if (!string.IsNullOrEmpty(dtCorrectValues.Rows[lastrowid - 1]["Date of OPT"].ToString()))
+                                        {
+                                            DateTime date = DateTime.ParseExact(dtCorrectValues.Rows[lastrowid - 1]["Date of OPT"].ToString(), "dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture);
+                                            string formattedDate = date.ToString("yyyy-MM-dd");
+                                            dt = Convert.ToDateTime(formattedDate).ToString();//"yyyy-MM-dd"
+                                            dtCorrectValues.Rows[lastrowid - 1]["Date of OPT"] = formattedDate;
+                                        }
+                                        else
+                                        {
+                                            dtCorrectValues.Rows[lastrowid - 1]["Date of OPT"] = null;
+                                        }
                                     }
                                     else
                                     {
@@ -128,48 +201,49 @@ namespace CAVISTAAPI.Controllers
                                     bool NoErrorwhenInsert = true;
                                     for (int i = 0; i < dtCorrectValues.Rows.Count; i++)
                                     {
-                                        DataTable DDT = objBL.BL_ExecuteParamSP("uspManageCustomerMasterImport",
-                                            dtCorrectValues.Rows[i]["Code *"].ToString(),
-                                            dtCorrectValues.Rows[i]["Name *"].ToString(),
-                                            dtCorrectValues.Rows[i]["Billing Address 1"].ToString(),
-                                            dtCorrectValues.Rows[i]["Billing Address 2"].ToString(),
-                                            dtCorrectValues.Rows[i]["Billing Address 3"].ToString(),
-                                            dtCorrectValues.Rows[i]["Shipping Address 1"].ToString(),
-                                            dtCorrectValues.Rows[i]["Shipping Address 2"].ToString(),
-                                            dtCorrectValues.Rows[i]["Shipping Address 3"].ToString(),
-                                            dtCorrectValues.Rows[i]["Pincode *"].ToString(),
-                                            dtCorrectValues.Rows[i]["Contact Person"].ToString(),
-                                            dtCorrectValues.Rows[i]["Phone No 1"].ToString(),
-                                            dtCorrectValues.Rows[i]["Phone No 2"].ToString(),
-                                            dtCorrectValues.Rows[i]["Mobile No 1"].ToString(),
-                                            dtCorrectValues.Rows[i]["Mobile No 2"].ToString(),
+                                        int customerid = objBL.BL_nValidation(dtCorrectValues.Rows[i]["ID"].ToString());
+                                        DataTable DDT = objBL.BL_ExecuteParamSP("uspManageCustomerMaster", customerid > 0 ? 2 : 1,
+                                            customerid,
+                                            dtCorrectValues.Rows[i]["Customer Code *"].ToString(),
+                                            dtCorrectValues.Rows[i]["Customer Group Code *"].ToString(),
+                                            dtCorrectValues.Rows[i]["First Name *"].ToString(),
+                                            dtCorrectValues.Rows[i]["Father Name *"].ToString(),
+                                            dtCorrectValues.Rows[i]["Constitution *"].ToString(),
+                                            dtCorrectValues.Rows[i]["Name of Business"].ToString(),
+                                            dtCorrectValues.Rows[i]["Business PAN No"].ToString(),
+                                            dtCorrectValues.Rows[i]["GST No"].ToString(),
+                                            dtCorrectValues.Rows[i]["PAN No"].ToString(),
+                                            !string.IsNullOrEmpty(dtCorrectValues.Rows[i]["Date of Registration/Incorporation"].ToString()) ? dtCorrectValues.Rows[i]["Date of Registration/Incorporation"].ToString() : null,
+                                            !string.IsNullOrEmpty(dtCorrectValues.Rows[i]["Date of Birth"].ToString()) ? dtCorrectValues.Rows[i]["Date of Birth"].ToString() : null,                                            
+                                            dtCorrectValues.Rows[i]["Account Manager"].ToString(),
+                                            dtCorrectValues.Rows[i]["IT User Name"].ToString(),
+                                            dtCorrectValues.Rows[i]["IT Password"].ToString(),
+                                            dtCorrectValues.Rows[i]["IT File No"].ToString(),
+                                            dtCorrectValues.Rows[i]["IT Registered Email ID"].ToString(),
+                                            dtCorrectValues.Rows[i]["IT Registered Contact No"].ToString(),
+                                            dtCorrectValues.Rows[i]["GST File No"].ToString(),
+                                            dtCorrectValues.Rows[i]["GST User Name"].ToString(),
+                                            dtCorrectValues.Rows[i]["GST Password"].ToString(),
+                                            !string.IsNullOrEmpty(dtCorrectValues.Rows[i]["GST Registration Date"].ToString()) ? dtCorrectValues.Rows[i]["GST Registration Date"].ToString() : null,
+                                            dtCorrectValues.Rows[i]["GST Registration Type"].ToString(),
+                                            !string.IsNullOrEmpty(dtCorrectValues.Rows[i]["Date of OPT"].ToString()) ? dtCorrectValues.Rows[i]["Date of OPT"].ToString() : null,
+                                            dtCorrectValues.Rows[i]["GST Registered Email ID"].ToString(),
+                                            dtCorrectValues.Rows[i]["GST Registered Contact No"].ToString(),
+                                            dtCorrectValues.Rows[i]["Mobile No"].ToString(),
+                                            dtCorrectValues.Rows[i]["Additional Mobile No"].ToString(),
                                             dtCorrectValues.Rows[i]["Email ID"].ToString(),
-                                            dtCorrectValues.Rows[i]["PAN Number"].ToString(),
-                                            dtCorrectValues.Rows[i]["Aadhar No"].ToString(),
-                                            dtCorrectValues.Rows[i]["DL No 20"].ToString(),
-                                            dtCorrectValues.Rows[i]["DL No 21"].ToString(),
-                                            dtCorrectValues.Rows[i]["FSSAI No"].ToString(),
+                                            dtCorrectValues.Rows[i]["Additional Email ID"].ToString(),
+                                            dtCorrectValues.Rows[i]["LLI PIN No"].ToString(),
+                                            dtCorrectValues.Rows[i]["TAN No"].ToString(),
+                                            dtCorrectValues.Rows[i]["CIN No"].ToString(),
+                                            dtCorrectValues.Rows[i]["DIN No"].ToString(),
+                                            dtCorrectValues.Rows[i]["Address"].ToString(),
+                                            dtCorrectValues.Rows[i]["City"].ToString(),
                                             dtCorrectValues.Rows[i]["State Name"].ToString(),
-                                            dtCorrectValues.Rows[i]["GSTIN"].ToString(),
-                                            dtCorrectValues.Rows[i]["Credit Term"].ToString(),
-                                            dtCorrectValues.Rows[i]["Payment Mode"].ToString(),
-                                            dtCorrectValues.Rows[i]["Tax Type *"].ToString(),
-                                            objBL.BL_dValidation(dtCorrectValues.Rows[i]["Over Due Value"].ToString()),
-                                            objBL.BL_nValidation(dtCorrectValues.Rows[i]["Over Due Inv Count"].ToString()),
-                                            objBL.BL_dValidation(dtCorrectValues.Rows[i]["Credit Limit Value"].ToString()),
-                                            objBL.BL_nValidation(dtCorrectValues.Rows[i]["Credit Limit Count"].ToString()),
-                                            objBL.BL_dValidation(dtCorrectValues.Rows[i]["Over Due Value"].ToString()),
-                                            dtCorrectValues.Rows[i]["Price Type *"].ToString(),
-                                            dtCorrectValues.Rows[i]["Owner Name"].ToString(),
-                                            objBL.BL_dValidation(dtCorrectValues.Rows[i]["Discount %"].ToString()),
-                                            dtCorrectValues.Rows[i]["Track Point"].ToString() == "Y" ? "1" : "0", 0,
-                                            dtCorrectValues.Rows[i]["TCS Tax"].ToString() == "Y" ? "1" : "0", null, null,
-                                            dtCorrectValues.Rows[i]["Distance"].ToString(),
-                                            dtCorrectValues.Rows[i]["Remark"].ToString(),
+                                            dtCorrectValues.Rows[i]["Country"].ToString(),
+                                            dtCorrectValues.Rows[i]["Pincode"].ToString(),
                                             dtCorrectValues.Rows[i]["Active"].ToString() == "Y" ? "1" : "0",
-                                            objBL.BL_nValidation(UserID),
-                                            dtCorrectValues.Rows[i]["Customer Type"].ToString(),
-                                            dtCorrectValues.Rows[i]["Rating"].ToString());
+                                            objBL.BL_nValidation(UserID)); 
                                         if (DDT.Columns.Count == 3)
                                         {
                                             NoErrorwhenInsert = false;
@@ -234,6 +308,10 @@ namespace CAVISTAAPI.Controllers
                         }
                         #endregion
                     }
+                    else
+                    {
+                        Msg = "2";// column names mismatching
+                    }
                 }
                 else
                 {
@@ -242,10 +320,11 @@ namespace CAVISTAAPI.Controllers
             }
             catch (Exception ex)
             {
+                objBL.BL_WriteErrorMsginLog("Import", TName, ex.Message);
                 MTM.Add(new ImportResults()
                 {
                     ID = "2",
-                    Msg = ex.Message + " Date : " + dt,
+                    Msg = ex.Message,
                 });
                 return Ok(MTM);
             }
@@ -255,58 +334,131 @@ namespace CAVISTAAPI.Controllers
         {
             string RowError = "";
 
-            if (string.IsNullOrEmpty(dtCheck.Rows[0]["Code *"].ToString()))
+            if (string.IsNullOrEmpty(dtCheck.Rows[0]["Customer Code *"].ToString()))
             {
-                RowError += "Code : Code should not be empty\n";
+                RowError += "Customer Code : Code should not be empty\n";
             }
             else
             {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Code *"].ToString()))
+                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Customer Code *"].ToString()))
                 {
-                    RowError += "Code : Invalid character\n";
+                    RowError += "Customer Code : Invalid character\n";
+                }
+                else
+                {
+                    DataTable dt = objBL.BL_ExecuteParamSP("uspgetidfromnameforimport", "customercode", dtCheck.Rows[0]["Customer Code *"].ToString());
+                    if (dt.Rows.Count == 0)
+                    {
+                        CustomerID = 0;
+                    }
+                    else
+                    {
+                        CustomerID = Convert.ToInt32(dt.Rows[0][0].ToString());
+                    }
                 }
             }
-            if (string.IsNullOrEmpty(dtCheck.Rows[0]["Name *"].ToString()))
+            if (string.IsNullOrEmpty(dtCheck.Rows[0]["Customer Group Code *"].ToString()))
             {
-                RowError += "Name : Name should not be empty\n";
+                RowError += "Customer Group Code : Customer Group Code should not be empty\n";
             }
             else
             {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Name *"].ToString()))
+                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Customer Group Code *"].ToString()))
                 {
-                    RowError += "Name : Invalid character\n";
+                    RowError += "Customer Group Code : Invalid character\n";
+                }
+                else
+                {
+                    string CGC = dtCheck.Rows[0]["Customer Group Code *"].ToString().ToUpper();
+                    if(CGC == "TAX AUDIT")
+                    {
+                        CustomerGroupCodeID = 1;
+                    }
+                    else if(CGC == "NON TAX AUDIT")
+                    {
+                        CustomerGroupCodeID = 2;
+                    }
+                    else
+                    {
+                        RowError += "Customer Group Code :Invalid Group Code. Code must be TAX AUDIT or NON TAX AUDIT only \n";
+                    }
                 }
             }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Customer Type"].ToString()))
+            if (string.IsNullOrEmpty(dtCheck.Rows[0]["First Name *"].ToString()))
             {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Customer Type"].ToString()))
-                {
-                    RowError += "Customer Type : Invalid character\n";
-                }
-            }
-            if (string.IsNullOrEmpty(dtCheck.Rows[0]["Price Type *"].ToString()))
-            {
-                RowError += "Price Type should not be empty\n";
+                RowError += "First Name should not be empty\n";
             }
             else
             {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Price Type *"].ToString()))
+                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["First Name *"].ToString()))
                 {
-                    RowError += "Price Type : Invalid character\n";
+                    RowError += "First Name : Invalid character\n";
                 }
             }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Owner Name"].ToString()))
+
+            if (string.IsNullOrEmpty(dtCheck.Rows[0]["Father Name *"].ToString()))
             {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Owner Name"].ToString()))
+                RowError += "Father Name should not be empty\n";
+            }
+            else
+            {
+                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Father Name *"].ToString()))
                 {
-                    RowError += "Owner Name : Invalid character\n";
+                    RowError += "Father Name : Invalid character\n";
                 }
             }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Contact Person"].ToString()))
+
+            if (string.IsNullOrEmpty(dtCheck.Rows[0]["Constitution *"].ToString()))
             {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Contact Person"].ToString()))
+                RowError += "Constitution : Code should not be empty\n";
+            }
+            else
+            {
+                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Constitution *"].ToString()))
                 {
-                    RowError += "Contact Person : Invalid character\n";
+                    RowError += "Constitution * : Invalid character\n";
+                }
+                else
+                {
+                    DataTable dt = objBL.BL_ExecuteParamSP("uspgetidfromnameforimport", "constitutions", dtCheck.Rows[0]["Constitution *"].ToString());
+                    if (dt.Rows.Count == 0)
+                    {
+                        ConstitutionID = 0;
+                        RowError += "Constitution :Invalid Constitution. Check with Default sheet Constitutions. \n";
+                    }
+                    else
+                    {
+                        ConstitutionID = Convert.ToInt32(dt.Rows[0][0].ToString());
+                    }
+                }
+            }
+
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Name of Business"].ToString()))
+            {
+                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Name of Business"].ToString()))
+                {
+                    RowError += "Name of Business : Invalid character\n";
+                }
+            }
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Date of Registration/Incorporation"].ToString()))
+            {
+                if (!objBL.BL_DateformatDMY(dtCheck.Rows[0]["Date of Registration/Incorporation"].ToString()))
+                {
+                    RowError += "Date of Registration/Incorporation : Invalid Date Format(Format : dd/MM/yyyy)\n";
+                }
+            }
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Account Manager"].ToString()))
+            {
+                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Account Manager"].ToString()))
+                {
+                    RowError += "Account Manager : Invalid character\n";
+                }
+            }
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Mobile No"].ToString()))
+            {
+                if (!objBL.BL_MobileNumberValidate(dtCheck.Rows[0]["Mobile No"].ToString()))
+                {
+                    RowError += "Mobile No : Invalid Phone No Format\n";
                 }
             }
             if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Email ID"].ToString()))
@@ -316,232 +468,172 @@ namespace CAVISTAAPI.Controllers
                     RowError += "Email ID : Invalid Email Format\n";
                 }
             }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Phone No 1"].ToString()))
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Date of Birth"].ToString()))
             {
-                if (!objBL.BL_MobileNumberValidate(dtCheck.Rows[0]["Phone No 1"].ToString()))
+                if (!objBL.BL_DateformatDMY(dtCheck.Rows[0]["Date of Birth"].ToString()))
                 {
-                    RowError += "Phone No 1 : Invalid Phone No Format\n";
+                    RowError += "Date of Birth : Invalid Date Format(Format : dd/MM/yyyy)\n";
                 }
             }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Phone No 2"].ToString()))
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["PAN No"].ToString()))
             {
-                if (!objBL.BL_MobileNumberValidate(dtCheck.Rows[0]["Phone No 2"].ToString()))
+                if (!objBL.BL_PANValidation(dtCheck.Rows[0]["PAN No"].ToString()))
                 {
-                    RowError += "Phone No 2 : Invalid Phone No Format\n";
+                    RowError += "PAN No : Invalid PAN No/ Foramt\n";
                 }
             }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Mobile No 1"].ToString()))
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Business PAN No"].ToString()))
             {
-                if (!objBL.BL_MobileNumberValidate(dtCheck.Rows[0]["Mobile No 1"].ToString()))
+                if (!objBL.BL_PANValidation(dtCheck.Rows[0]["Business PAN No"].ToString()))
                 {
-                    RowError += "Mobile No 1 : Invalid Mobile No Format\n";
+                    RowError += "Business PAN No : Invalid PAN No/ Foramt\n";
                 }
             }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Mobile No 2"].ToString()))
+
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["IT File No"].ToString()))
             {
-                if (!objBL.BL_MobileNumberValidate(dtCheck.Rows[0]["Mobile No 2"].ToString()))
+                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["IT File No"].ToString()))
                 {
-                    RowError += "Mobile No 2 : Invalid Mobile No Format\n";
+                    RowError += "IT File No : Invalid character\n";
                 }
             }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Billing Address 1"].ToString()))
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["IT User Name"].ToString()))
             {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Billing Address 1"].ToString()))
+                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["IT User Name"].ToString()))
                 {
-                    RowError += "Billing Address 1 : Invalid character\n";
+                    RowError += "IT User Name : Invalid character\n";
                 }
             }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Billing Address 2"].ToString()))
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["IT Registered Contact No"].ToString()))
             {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Billing Address 2"].ToString()))
+                if (!objBL.BL_MobileNumberValidate(dtCheck.Rows[0]["IT Registered Contact No"].ToString()))
                 {
-                    RowError += "Billing Address 2 : Invalid character\n";
+                    RowError += "IT Registered Contact No : Invalid Format\n";
                 }
             }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Billing Address 3"].ToString()))
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["IT Registered Email ID"].ToString()))
             {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Billing Address 3"].ToString()))
+                if (!objBL.BL_Email(dtCheck.Rows[0]["IT Registered Email ID"].ToString()))
                 {
-                    RowError += "Billing Address 3 : Invalid character\n";
+                    RowError += "IT Registered Email ID : Invalid Email Format\n";
                 }
             }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Shipping Address 1"].ToString()))
+
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["GST No"].ToString()))
             {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Shipping Address 1"].ToString()))
+                if (!objBL.BL_isValidGSTIN(dtCheck.Rows[0]["GST No"].ToString()))
                 {
-                    RowError += "Shipping Address 1 : Invalid character\n";
+                    RowError += "GST No : Invalid GST No/ Foramt\n";
                 }
             }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Shipping Address 2"].ToString()))
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["GST File No"].ToString()))
             {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Shipping Address 2"].ToString()))
+                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["GST File No"].ToString()))
                 {
-                    RowError += "Shipping Address 2 : Invalid character\n";
+                    RowError += "GST File No : Invalid character\n";
                 }
             }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Shipping Address 3"].ToString()))
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["GST User Name"].ToString()))
             {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Shipping Address 3"].ToString()))
+                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["GST User Name"].ToString()))
                 {
-                    RowError += "Shipping Address 3 : Invalid character\n";
+                    RowError += "GST User Name : Invalid character\n";
                 }
             }
-            if (string.IsNullOrEmpty(dtCheck.Rows[0]["Pincode *"].ToString()))
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["GST Registration Date"].ToString()))
             {
-                RowError += "Pincode should not be empty\n";
+                if (!objBL.BL_DateformatDMY(dtCheck.Rows[0]["GST Registration Date"].ToString()))
+                {
+                    RowError += "GST Registration Date : Invalid Date Format(Format : dd/MM/yyyy)\n";
+                }
             }
-            else
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["GST Registration Type"].ToString()))
             {
-                if (!objBL.BL_PinNumberValidate(dtCheck.Rows[0]["Pincode *"].ToString()))
+                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["GST Registration Type"].ToString()))
+                {
+                    RowError += "GST Registration Type : Invalid character\n";
+                }
+            }
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Date of OPT"].ToString()))
+            {
+                if (!objBL.BL_DateformatDMY(dtCheck.Rows[0]["Date of OPT"].ToString()))
+                {
+                    RowError += "Date of OPT : Invalid Date Format(Format : dd/MM/yyyy)\n";
+                }
+            }
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["GST Registered Contact No"].ToString()))
+            {
+                if (!objBL.BL_MobileNumberValidate(dtCheck.Rows[0]["GST Registered Contact No"].ToString()))
+                {
+                    RowError += "GST Registered Contact No : Invalid Format\n";
+                }
+            }
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["GST Registered Email ID"].ToString()))
+            {
+                if (!objBL.BL_Email(dtCheck.Rows[0]["GST Registered Email ID"].ToString()))
+                {
+                    RowError += "GST Registered Email ID : Invalid Email Format\n";
+                }
+            }
+
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Additional Mobile No"].ToString()))
+            {
+                if (!objBL.BL_MobileNumberValidate(dtCheck.Rows[0]["Additional Mobile No"].ToString()))
+                {
+                    RowError += "Additional Mobile No : Invalid Phone No Format\n";
+                }
+            }
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Additional Email ID"].ToString()))
+            {
+                if (!objBL.BL_Email(dtCheck.Rows[0]["Additional Email ID"].ToString()))
+                {
+                    RowError += "Additional Email ID : Invalid Email Format\n";
+                }
+            }
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Address"].ToString()))
+            {
+                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Address"].ToString()))
+                {
+                    RowError += "Address : Invalid character\n";
+                }
+            }
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["City"].ToString()))
+            {
+                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["City"].ToString()))
+                {
+                    RowError += "City : Invalid character\n";
+                }
+            }
+            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Pincode"].ToString()))
+            {
+                if (!objBL.BL_PinNumberValidate(dtCheck.Rows[0]["Pincode"].ToString()))
                 {
                     RowError += "Pincode : Invalid character(Numbers only)\n";
                 }
             }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Distance"].ToString()))
-            {
-                if (!objBL.BL_Numeric(dtCheck.Rows[0]["Distance"].ToString()))
-                {
-                    RowError += "Distance : Invalid character(Numbers only)\n";
-                }
-            }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Credit Limit Value"].ToString()))
-            {
-                if (!objBL.BL_NumericWithDecimal(dtCheck.Rows[0]["Credit Limit Value"].ToString()))
-                {
-                    RowError += "Credit Limit Value : Invalid character\n";
-                }
-            }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Credit Limit Count"].ToString()))
-            {
-                if (!objBL.BL_Numeric(dtCheck.Rows[0]["Credit Limit Count"].ToString()))
-                {
-                    RowError += "Credit Limit Count : Invalid character(Numbers only)\n";
-                }
-            }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Over Due Value"].ToString()))
-            {
-                if (!objBL.BL_NumericWithDecimal(dtCheck.Rows[0]["Over Due Value"].ToString()))
-                {
-                    RowError += "Over Due Value : Invalid character\n";
-                }
-            }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Over Due Inv Count"].ToString()))
-            {
-                if (!objBL.BL_Numeric(dtCheck.Rows[0]["Over Due Inv Count"].ToString()))
-                {
-                    RowError += "Over Due Inv Count : Invalid character(Numbers only)\n";
-                }
-            }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["PAN Number"].ToString()))
-            {
-                if (!objBL.BL_PANValidation(dtCheck.Rows[0]["PAN Number"].ToString()))
-                {
-                    RowError += "PAN Number : Invalid character\n";
-                }
-            }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Aadhar No"].ToString()))
-            {
-                if (!objBL.BL_AadhaarValidate(dtCheck.Rows[0]["Aadhar No"].ToString()))
-                {
-                    RowError += "Aadhar No : Invalid character(Numbers only)\n";
-                }
-            }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["FSSAI No"].ToString()))
-            {
-                if (!objBL.BL_FSSAIValidate(dtCheck.Rows[0]["FSSAI No"].ToString()))
-                {
-                    RowError += "FSSAI No : Invalid character(Numbers only)\n";
-                }
-            }
+            
+           
+           
             if (!string.IsNullOrEmpty(dtCheck.Rows[0]["State Name"].ToString()))
             {
                 if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["State Name"].ToString()))
                 {
                     RowError += "State Name : Invalid character\n";
                 }
-            }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["GSTIN"].ToString()))
-            {
-                if (!objBL.BL_isValidGSTIN(dtCheck.Rows[0]["GSTIN"].ToString()))
-                {
-                    RowError += "GSTIN : Invalid character\n";
-                }
-            }
-            if (string.IsNullOrEmpty(dtCheck.Rows[0]["Tax Type *"].ToString()))
-            {
-                RowError += "Tax Type should not be empty\n";
-            }
-            else
-            {
-                if (!objBL.BL_AlphaNumeric(dtCheck.Rows[0]["Tax Type *"].ToString()))
-                {
-                    RowError += "Tax Type : Invalid character\n";
-                }
-            }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Payment Mode"].ToString()))
-            {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Payment Mode"].ToString()))
-                {
-                    RowError += "Payment Mode : Invalid character\n";
-                }
-            }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Credit Term"].ToString()))
-            {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Credit Term"].ToString()))
-                {
-                    RowError += "Credit Term : Invalid character\n";
-                }
-            }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Discount %"].ToString()))
-            {
-                if (!objBL.BL_NumericWithDecimal(dtCheck.Rows[0]["Discount %"].ToString()))
-                {
-                    RowError += "Discount % : Invalid character\n";
-                }
                 else
                 {
-                    if (objBL.BL_dValidation(dtCheck.Rows[0]["Discount %"].ToString()) > 100)
+                    DataTable dt = objBL.BL_ExecuteParamSP("uspgetidfromnameforimport", "statename", dtCheck.Rows[0]["State Name"].ToString());
+                    if (dt.Rows.Count == 0)
                     {
-                        RowError += "Discount % : % should be less than 100\n";
+                        StateID = 0;
+                        RowError += "State Name :Invalid State Name. Check with Default sheet State Name. \n";
+                    }
+                    else
+                    {
+                        StateID = Convert.ToInt32(dt.Rows[0][0].ToString());
                     }
                 }
-            }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Remark"].ToString()))
-            {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Remark"].ToString()))
-                {
-                    RowError += "Remark : Invalid character\n";
-                }
-            }
-            if (!string.IsNullOrEmpty(dtCheck.Rows[0]["Rating"].ToString()))
-            {
-                if (!objBL.BL_AlphaNumericSpl(dtCheck.Rows[0]["Rating"].ToString()))
-                {
-                    RowError += "Rating : Invalid character\n";
-                }
-            }
-            if (string.IsNullOrEmpty(dtCheck.Rows[0]["TCS Tax"].ToString()))
-            {
-                RowError += "TCS Tax should not be empty\n\n";
-            }
-            else
-            {
-                if (dtCheck.Rows[0]["TCS Tax"].ToString().ToUpper() != "Y" && dtCheck.Rows[0]["TCS Tax"].ToString().ToUpper() != "N")
-                {
-                    RowError += "TCS Tax : Value should be Y or N\n";
-                }
-            }
-            if (string.IsNullOrEmpty(dtCheck.Rows[0]["Track Point"].ToString()))
-            {
-                RowError += "Track Point should not be empty\n\n";
-            }
-            else
-            {
-                if (dtCheck.Rows[0]["Track Point"].ToString().ToUpper() != "Y" && dtCheck.Rows[0]["Track Point"].ToString().ToUpper() != "N")
-                {
-                    RowError += "Track Point : Value should be Y or N\n";
-                }
-            }
+            }            
             if (string.IsNullOrEmpty(dtCheck.Rows[0]["Active"].ToString()))
             {
                 RowError += "Active should not be empty\n\n";
@@ -553,13 +645,6 @@ namespace CAVISTAAPI.Controllers
                     RowError += "Active : Value should be Y or N\n";
                 }
             }
-            //Code *	Name *	Customer Type	Price Type *	Owner Name	Contact Person	Email ID	Phone No 1	
-            //Phone No 2	Mobile No 1	Mobile No 2	Billing Address 1	Billing Address 2	Billing Address 3	
-            //Shipping Address 1	Shipping Address 2	Shipping Address 3	Pincode *	Distance	Credit Limit Value	
-            //Credit Limit Count	Over Due Value	Over Due Inv Count	PAN Number	Aadhar No	FSSAI No	DL No 20	
-            //DL No 21	State Name	GSTIN	Tax Type *	Payment Mode	Credit Term	Discount %	Remark	Rating	
-            //TCS Tax	Track Point	Active
-
             return RowError;
         }
         public void ColumnValidation(List<string> lst, ref bool blResult)
@@ -822,39 +907,27 @@ namespace CAVISTAAPI.Controllers
             //strFilePath = AppDomain.CurrentDomain.BaseDirectory + "\\Export Data\\";
             strFilePath = FPt + "\\Export Data\\";
             strFileName = TransName + (Type == 1 ? "_Import_" : "_Export_") + DateTime.Now.ToString("yyyyMMddHHmmss");
-            strSheetName = TransName;            
+            strSheetName = TransName;
             if (Type == 1)
             {
-                if (TransID == 9)
-                {
-                    dt = objBL.BL_ExecuteParamSP("uspgetsetImportExport", 1, TransID, null, DateTime.Now.AddYears(-21), DateTime.Now.AddYears(-20));
-                    dtDefaultData = objBL.BL_ExecuteParamSP("uspgetsetImportExport", 2, TransID, DateTime.Now.AddYears(-21), DateTime.Now.AddYears(-20));
-                }
-                else
+                if (Type == 1)
                 {
                     foreach (string strHeaderName in str)
                     {
                         dt.Columns.Add(strHeaderName, typeof(string));
                     }
-                    dtDefaultData = objBL.BL_ExecuteParamSP("uspgetsetImportExport", 2, TransID, null, FromDate, ToDate);
-                    dtExampleData = objBL.BL_ExecuteParamSP("uspgetsetImportExport", 3, TransID, null, FromDate, ToDate);
+                    dtDefaultData = objBL.BL_ExecuteParamSP("uspgetsetImportExport", 2, TransID, null);
+                    dtExampleData = objBL.BL_ExecuteParamSP("uspgetsetImportExport", 3, TransID, null);
                 }
             }
             else if (Type == 2)
             {
-                dt = objBL.BL_ExecuteParamSP("uspgetsetImportExport", 1, TransID, null, FromDate, ToDate);
-                dtDefaultData = objBL.BL_ExecuteParamSP("uspgetsetImportExport", 2, TransID, null, FromDate, ToDate);
-                dtExampleData = objBL.BL_ExecuteParamSP("uspgetsetImportExport", 3, TransID, null, FromDate, ToDate);
+                dt = objBL.BL_ExecuteParamSP("uspgetsetImportExport", 1, TransID, null);
+                dtDefaultData = objBL.BL_ExecuteParamSP("uspgetsetImportExport", 2, TransID, null);
+                dtExampleData = objBL.BL_ExecuteParamSP("uspgetsetImportExport", 3, TransID, null);
             }
             strSheetName = "Data";
-            if (TransID == 9)
-            {
-                ExportToExcelTwoSheet(dt, "Header", dtDefaultData, "Items");
-            }
-            else
-            {
-                ExportToExcelThreeSheet(dt, "Data", dtDefaultData, "Default Data", dtExampleData, "Example");
-            }
+            ExportToExcelThreeSheet(dt, "Data", dtDefaultData, "Default Data", dtExampleData, "Example");
         }
         public void ExportToExcel(DataTable DtData)
         {
@@ -944,25 +1017,15 @@ namespace CAVISTAAPI.Controllers
         {
             return new List<string>()
             {
-                "Code *","Name *","Customer Type","Price Type *","Owner Name","Contact Person","Email ID",
-                "Phone No 1","Phone No 2","Mobile No 1","Mobile No 2","Billing Address 1","Billing Address 2",
-                "Billing Address 3","Shipping Address 1","Shipping Address 2","Shipping Address 3","Pincode *","Distance",
-                "Credit Limit Value","Credit Limit Count","Over Due Value","Over Due Inv Count","PAN Number","Aadhar No",
-                "FSSAI No","DL No 20","DL No 21","State Name","GSTIN","Tax Type *","Payment Mode","Credit Term","Discount %",
-                "Remark","Rating","TCS Tax","Track Point","Active"
+                "Customer Code *",  "Customer Group Code *",    "First Name *", "Father Name *",  "Constitution *", "Name of Business", "Date of Registration/Incorporation",   "Account Manager",  "Mobile No",    "Email ID", "Date of Birth",    "PAN No",   "Business PAN No",  "IT User Name", "IT Password",  "IT File No",   "IT Registered Email ID",   "IT Registered Contact No", "LLI PIN No",   "TAN No",   "CIN No",   "DIN No",   "GST No",   "GST File No",  "GST User Name",    "GST Password", "GST Registration Date",    "GST Registration Type",    "Date of OPT",  "GST Registered Email ID",  "GST Registered Contact No",    "Additional Mobile No", "Additional Email ID",  "Address",  "City", "State Name",   "Country",  "Pincode",  "Active"
                 };
         }
         public static List<string> CustomerMasterTempWithErrCol()
         {
             return new List<string>()
             {
-                "Code *","Name *","Customer Type","Price Type *","Owner Name","Contact Person","Email ID",
-                "Phone No 1","Phone No 2","Mobile No 1","Mobile No 2","Billing Address 1","Billing Address 2",
-                "Billing Address 3","Shipping Address 1","Shipping Address 2","Shipping Address 3","Pincode *","Distance",
-                "Credit Limit Value","Credit Limit Count","Over Due Value","Over Due Inv Count","PAN Number","Aadhar No",
-                "FSSAI No","DL No 20","DL No 21","State Name","GSTIN","Tax Type *","Payment Mode","Credit Term","Discount %",
-                "Remark","Rating","TCS Tax","Track Point","Active","Error"
-                };
+                "Customer Code *",  "Customer Group Code *",    "First Name *", "Father Name *",  "Constitution *", "Name of Business", "Date of Registration/Incorporation",   "Account Manager",  "Mobile No",    "Email ID", "Date of Birth",    "PAN No",   "Business PAN No",  "IT User Name", "IT Password",  "IT File No",   "IT Registered Email ID",   "IT Registered Contact No", "LLI PIN No",   "TAN No",   "CIN No",   "DIN No",   "GST No",   "GST File No",  "GST User Name",    "GST Password", "GST Registration Date",    "GST Registration Type",    "Date of OPT",  "GST Registered Email ID",  "GST Registered Contact No",    "Additional Mobile No", "Additional Email ID",  "Address",  "City", "State Name",   "Country",  "Pincode",  "Active","Error"
+};
         }
     }
 }

@@ -49,6 +49,8 @@ namespace CAVISTAAPI.Models
         public string Pincode { get; set; }
         public string Active { get; set; }
         public string Cby { get; set; }
+        public List<object> FileList { get; set; }
+
 
     }
     public class MasterModel

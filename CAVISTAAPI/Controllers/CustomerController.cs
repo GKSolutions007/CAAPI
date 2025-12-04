@@ -6,10 +6,14 @@ using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 
@@ -46,6 +50,40 @@ namespace CAVISTAAPI.Controllers
                 DataTable dtCustomers = bl.BL_ExecuteParamSP("uspgetsetCustomerMaster", Mode, ID);
                 if (dtCustomers.Rows.Count > 0)
                 {
+                    var fileList = new List<object>();
+                    string contansfolder = "Attachments\\Customer\\" + ID + "\\";
+                    string uploadFolder = System.Configuration.ConfigurationManager.AppSettings["SupportFilePath"] + contansfolder;
+                    if (Directory.Exists(uploadFolder))
+                    {
+                        var files = new DirectoryInfo(uploadFolder)
+                                       .GetFiles()
+                                       .OrderByDescending(f => f.CreationTime);  // sort by created date (newest first)
+
+                        foreach (FileInfo fi in files)
+                        {
+                            string fullPath = fi.FullName;          // Full path
+                            string fileName = fi.Name;              // File name with extension
+                            string extension = fi.Extension;        // Extension (.txt, .xls etc.)
+                            string CreateTime = fi.CreationTime.ToString("dd/MMM/yyyy hh:mm:ss tt");
+                            long sizeInBytes = fi.Length;
+
+                            string fileSize;
+                            if (sizeInBytes < 1024 * 1024) // less than 1 MB
+                                fileSize = $"{(sizeInBytes / 1024.0):N2} KB";
+                            else
+                                fileSize = $"{(sizeInBytes / 1024.0 / 1024.0):N2} MB";
+
+                            fileList.Add(new
+                            {
+                                fullPath = fullPath,
+                                fileName = fileName,
+                                extension = extension,
+                                fileSize = fileSize,
+                                CreateTime = CreateTime,
+                                contansfolder = contansfolder
+                            });
+                        }
+                    }
                     List<CustomerMasterModel> list = new List<CustomerMasterModel>();
                     for (int i = 0; i < dtCustomers.Rows.Count; i++)
                     {
@@ -90,7 +128,8 @@ namespace CAVISTAAPI.Controllers
                             State = dtCustomers.Rows[i]["State"].ToString(),
                             Country = dtCustomers.Rows[i]["Country"].ToString(),
                             Pincode = dtCustomers.Rows[i]["Pincode"].ToString(),
-                            Active = dtCustomers.Rows[i]["Active"].ToString()
+                            Active = dtCustomers.Rows[i]["Active"].ToString(),
+                            FileList = fileList
                         });
                     }
                     return Ok(list);
@@ -100,7 +139,7 @@ namespace CAVISTAAPI.Controllers
             return Ok();
         }
             [HttpPost]
-        [Route("api/customer/save")]
+        [Route("api/customer/save_older")]
         public IHttpActionResult savecustomer(CustomerMasterModel lstMaster)
         {
             if (lstMaster != null)
@@ -143,6 +182,189 @@ namespace CAVISTAAPI.Controllers
                 return Ok(list);
             }
             return Ok();
+        }
+        [HttpPost]
+        [Route("api/customer/save")]
+        public async Task<IHttpActionResult> SaveCustomer()
+        {
+            // Check if form-data exists
+            if (!Request.Content.IsMimeMultipartContent())
+                return BadRequest("Unsupported media type");
+
+            var provider = new MultipartMemoryStreamProvider();
+            await Request.Content.ReadAsMultipartAsync(provider);
+
+            CustomerMasterModel lstMaster = null;
+            List<HttpContent> fileContents = new List<HttpContent>();
+
+            // Read form-data fields
+            foreach (var content in provider.Contents)
+            {
+                var name = content.Headers.ContentDisposition.Name.Trim('"');
+
+                if (name == "model")
+                {
+                    var json = await content.ReadAsStringAsync();
+                    lstMaster = Newtonsoft.Json.JsonConvert.DeserializeObject<CustomerMasterModel>(json);
+                }
+                else if (name == "Customer")
+                {
+                    fileContents.Add(content);
+                }
+            }
+
+            // If model not found → fail
+            if (lstMaster == null)
+                return BadRequest("Model is missing");
+
+            // ==========================
+            List<SaveMessage> list = new List<SaveMessage>();
+
+            DataTable DDT = bl.BL_ExecuteParamSP(
+                "uspManageCustomerMaster",
+                lstMaster.Mode,
+                bl.BL_nValidation(lstMaster.ID),
+                lstMaster.CustomerCode,
+                lstMaster.CustomerGroupCode,
+                lstMaster.FirstName,
+                lstMaster.FatherName,
+                lstMaster.Constitution,
+                lstMaster.NameofBusiness,
+                lstMaster.BusinessPanno,
+                lstMaster.GSTNo,
+                lstMaster.PANno,
+
+                !string.IsNullOrEmpty(lstMaster.DateRegorIncorp) ? lstMaster.DateRegorIncorp : null,
+                !string.IsNullOrEmpty(lstMaster.DOB) ? lstMaster.DOB : null,
+
+                lstMaster.AccountManage,
+                lstMaster.ITUserName,
+                !string.IsNullOrEmpty(lstMaster.ITPassword) ? clsEncryptDecrypt.Encrypt(lstMaster.ITPassword) : null,
+                lstMaster.ITFileNo,
+                lstMaster.ITRegEmailID,
+                lstMaster.ITRegContactNo,
+                lstMaster.GSTFileNo,
+                lstMaster.GSTUserName,
+                !string.IsNullOrEmpty(lstMaster.GSTPassword) ? clsEncryptDecrypt.Encrypt(lstMaster.GSTPassword) : null,
+                !string.IsNullOrEmpty(lstMaster.GSTRegDate) ? lstMaster.GSTRegDate : null,
+                lstMaster.GSTRegType,
+                !string.IsNullOrEmpty(lstMaster.DateofOPT) ? lstMaster.DateofOPT : null,
+                lstMaster.GSTRegEmailID,
+                lstMaster.GSTRegContactNo,
+                lstMaster.MobileNo,
+                lstMaster.AddMobileNo,
+                lstMaster.EmailID,
+                lstMaster.AddEmailID,
+                lstMaster.LLIPINno,
+                lstMaster.TANNo,
+                lstMaster.CINNo,
+                lstMaster.DINNo,
+                lstMaster.Address,
+                lstMaster.City,
+                lstMaster.State,
+                lstMaster.Country,
+                lstMaster.Pincode,
+                lstMaster.Active,
+                lstMaster.Cby
+            );
+
+            if (DDT.Columns.Count == 1)
+            {
+                string CustomerID = DDT.Rows[0][0].ToString();
+                // ==========================
+                //  SAVE FILE IF PROVIDED
+                // ==========================
+                foreach (var file in fileContents)
+                {
+                    string filename = file.Headers.ContentDisposition.FileName.Trim('"');
+
+                    if (!string.IsNullOrEmpty(filename))
+                    {
+                        byte[] fileBytes = await file.ReadAsByteArrayAsync();
+                        string uploadFolder = System.Configuration.ConfigurationManager.AppSettings["SupportFilePath"] + "Attachments\\Customer\\" + CustomerID + "\\";
+
+
+                    if (!Directory.Exists(uploadFolder))
+                            Directory.CreateDirectory(uploadFolder);
+
+                        string filePath = Path.Combine(uploadFolder, filename);
+                        File.WriteAllBytes(filePath, fileBytes);
+                    }
+                }
+                list.Add(new SaveMessage()
+                {
+                    ID = CustomerID,
+                    MsgID = "0",
+                    Message = "Saved Successfully"
+                });
+            }
+            else
+            {
+                list.Add(new SaveMessage()
+                {
+                    ID = "0",
+                    MsgID = "1",
+                    Message = DDT.Rows[0][0].ToString()
+                });
+            }
+
+            return Ok(list);
+        }
+        [HttpGet]
+        [Route("api/customer/deletemyuploadfile")]
+        public IHttpActionResult deletemyuploadfile(string FPath, string FName)
+        {
+            var fileList = new List<object>();
+
+            try
+            {
+                string MsgID = "0";
+                string Message = "";
+                if (File.Exists(FPath))
+                {
+                    File.Delete(FPath);
+                    MsgID = "1";
+                    Message = "File Deleted successfully";
+                }
+                else
+                {
+                    MsgID = "2";
+                    Message = "File Not Found";
+                }
+                fileList.Add(new
+                {
+                    MsgID = MsgID,
+                    Message = Message
+                });
+            }
+            catch (Exception ex)
+            {
+                bl.BL_WriteErrorMsginLog("Delete File", "deletemyuploadfile", ex.Message);
+            }
+            return Ok(fileList);
+        }
+        [HttpGet]
+        [Route("api/customer/downloadfile")]
+        public HttpResponseMessage DownloadFile(string FPath, string FName)
+        {
+            DataTable dt = new DataTable();
+            var sDocument = FPath;
+            byte[] fileBytes = System.IO.File.ReadAllBytes(sDocument);
+            string fileName = FName;
+            //return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+            if (!File.Exists(FPath))
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+
+            var result = new HttpResponseMessage(HttpStatusCode.OK);
+            var stream = new FileStream(FPath, FileMode.Open, FileAccess.Read);
+            result.Content = new StreamContent(stream);
+            result.Content.Headers.ContentType = new MediaTypeHeaderValue("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+            {
+                FileName = fileName
+            };
+            return result;
+            //return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         }
     }
 }
