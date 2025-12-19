@@ -165,7 +165,7 @@ namespace CAVISTAAPI.BuisnessLayer
             StreamWriter streamWriter = null;
             try
             {
-                string logFilePath = AppDomain.CurrentDomain.BaseDirectory;// System.Configuration.ConfigurationManager.AppSettings["SupportFilePath"];
+                string logFilePath =  System.Configuration.ConfigurationManager.AppSettings["SupportFilePath"];
                 DirectoryInfo parentDir = Directory.GetParent(logFilePath.EndsWith("\\") ? logFilePath : string.Concat(logFilePath, "\\"));
                 var myParentDir = parentDir.Parent.FullName;
                 string strFol = myParentDir + "\\Log File Errors\\";

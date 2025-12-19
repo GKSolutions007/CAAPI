@@ -202,12 +202,12 @@ namespace CAVISTAAPI.Controllers
             DataTable dtPermission = bl.BL_ExecuteParamSP("uspMenuPermission", 2, RID, UID);
             dtPermission.TableName = "UserMenus";
             ds.Tables.Add(dtPermission);
-            //DataTable dtReportParent = bl.BL_ExecuteParamSP("uspReportPermission", 1, RID);
-            //dtReportParent.TableName = "ParentRepMenu";
-            //ds.Tables.Add(dtReportParent);
-            //DataTable dtReportPermission = bl.BL_ExecuteParamSP("uspReportPermission", 2, RID, UID);
-            //dtReportPermission.TableName = "UserRepMenus";
-            //ds.Tables.Add(dtReportPermission);
+            DataTable dtReportParent = bl.BL_ExecuteParamSP("uspReportPermission", 1, RID);
+            dtReportParent.TableName = "ParentRepMenu";
+            ds.Tables.Add(dtReportParent);
+            DataTable dtReportPermission = bl.BL_ExecuteParamSP("uspReportPermission", 2, RID, UID);
+            dtReportPermission.TableName = "UserRepMenus";
+            ds.Tables.Add(dtReportPermission);
             string dtjson = JsonConvert.SerializeObject(ds);
             return Ok(dtjson);
         }

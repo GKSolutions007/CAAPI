@@ -100,105 +100,20 @@ D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\System.Runtime.CompilerServices.Unsafe.xml
 D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\System.Threading.Tasks.Extensions.xml
 D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Http.Cors.xml
 D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\Ionic.Zip.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\CAVISTAAPI.dll.config
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\CAVISTAAPI.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\CAVISTAAPI.pdb
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\csc.exe
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\csc.exe.config
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\csc.rsp
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\csi.exe
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\csi.exe.config
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\csi.rsp
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\Microsoft.CodeAnalysis.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\Microsoft.CSharp.Core.targets
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\Microsoft.Managed.Core.targets
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\Microsoft.VisualBasic.Core.targets
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\Microsoft.Win32.Primitives.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.AppContext.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Collections.Immutable.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Console.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Diagnostics.DiagnosticSource.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Diagnostics.FileVersionInfo.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Diagnostics.StackTrace.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Globalization.Calendars.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.IO.Compression.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.IO.Compression.ZipFile.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.IO.FileSystem.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.IO.FileSystem.Primitives.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Net.Http.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Net.Sockets.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Reflection.Metadata.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Runtime.InteropServices.RuntimeInformation.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Security.Cryptography.Algorithms.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Security.Cryptography.Encoding.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Security.Cryptography.Primitives.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Security.Cryptography.X509Certificates.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Text.Encoding.CodePages.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Threading.Tasks.Extensions.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.ValueTuple.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Xml.ReaderWriter.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Xml.XmlDocument.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Xml.XPath.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\System.Xml.XPath.XDocument.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\vbc.exe
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\vbc.exe.config
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\vbc.rsp
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\VBCSCompiler.exe
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\roslyn\VBCSCompiler.exe.config
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\Antlr3.Runtime.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\Ionic.Zip.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\Microsoft.Web.Infrastructure.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\Newtonsoft.Json.Bson.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\Newtonsoft.Json.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Buffers.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Memory.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Net.Http.Formatting.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Numerics.Vectors.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Runtime.CompilerServices.Unsafe.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Threading.Tasks.Extensions.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Cors.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Helpers.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Http.Cors.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Http.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Http.WebHost.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Mvc.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Optimization.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Razor.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.WebPages.Deployment.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.WebPages.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.WebPages.Razor.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\WebGrease.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\Newtonsoft.Json.Bson.pdb
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\Newtonsoft.Json.Bson.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Buffers.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Memory.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Net.Http.Formatting.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Numerics.Vectors.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Runtime.CompilerServices.Unsafe.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Threading.Tasks.Extensions.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Helpers.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Http.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Http.Cors.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Http.WebHost.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Mvc.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Razor.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.WebPages.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.WebPages.Deployment.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.WebPages.Razor.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\Newtonsoft.Json.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\System.Web.Optimization.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\Antlr3.Runtime.pdb
-D:\CA  VISTA\CAAPI\CAVISTAAPI\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-D:\CA  VISTA\CAAPI\CAVISTAAPI\obj\Debug\CAVISTAAPI.csproj.AssemblyReference.cache
-D:\CA  VISTA\CAAPI\CAVISTAAPI\obj\Debug\CAVISTAAPI.csproj.CoreCompileInputs.cache
-D:\CA  VISTA\CAAPI\CAVISTAAPI\obj\Debug\CAVISTAAPI.csproj.Up2Date
-D:\CA  VISTA\CAAPI\CAVISTAAPI\obj\Debug\CAVISTAAPI.dll
-D:\CA  VISTA\CAAPI\CAVISTAAPI\obj\Debug\CAVISTAAPI.pdb
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\ClosedXML.dll
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\ClosedXML.Parser.dll
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\DocumentFormat.OpenXml.dll
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\DocumentFormat.OpenXml.Framework.dll
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\ExcelNumberFormat.dll
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\Microsoft.Bcl.HashCode.dll
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\RBush.dll
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\SixLabors.Fonts.dll
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\ClosedXML.pdb
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\ClosedXML.xml
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\ClosedXML.Parser.xml
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\DocumentFormat.OpenXml.xml
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\DocumentFormat.OpenXml.Framework.xml
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\ExcelNumberFormat.xml
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\Microsoft.Bcl.HashCode.xml
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\RBush.xml
+D:\CA_VISTA\CAAPI\CAVISTAAPI\bin\SixLabors.Fonts.xml
